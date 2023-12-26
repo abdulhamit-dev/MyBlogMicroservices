@@ -45,7 +45,7 @@ namespace ContentAPI.Services
                 consumer.Received += (model, ea) =>
                 {
                     var commentCreatedEvent = JsonSerializer.Deserialize<CommentCreatedEvent>(Encoding.UTF8.GetString(ea.Body.ToArray()));
-                    var comment=_mapper.Map<Comment>(commentCreatedEvent);
+                    var comment = _mapper.Map<Comment>(commentCreatedEvent);
                     _contentService.UpdateComment(comment);
                 };
 
@@ -53,7 +53,7 @@ namespace ContentAPI.Services
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                Console.WriteLine("conn=");
+                    Console.WriteLine("conn=");
                     await Task.Delay(1000, stoppingToken);
                 }
             }
