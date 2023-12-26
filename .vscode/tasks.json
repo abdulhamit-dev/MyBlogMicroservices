@@ -119,6 +119,19 @@
 		  "kind": "build",
 		  "isDefault": true
 		}
+	  },
+	  {
+		"label": "build-TextSearchAPI",
+		"command": "dotnet",
+		"type": "process",
+		"args": [
+		  "build",
+		  "${workspaceFolder}/Services/TextSearch/TextSearchAPI"
+		],
+		"group": {
+		  "kind": "build",
+		  "isDefault": true
+		}
 	  }
 	]
   }

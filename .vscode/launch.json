@@ -153,6 +153,25 @@
       "launchBrowser": {
         "enabled": false
       }
+    },
+    {
+      "name": "TextSearchAPI",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-TextSearchAPI",
+      "program": "${workspaceFolder}/Services/TextSearch/TextSearchAPI/bin/Debug/net7.0/TextSearchAPI.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/Services/TextSearch/TextSearchAPI",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "sourceFileMap": {
+        "/Views": "${workspaceFolder}/Views"
+      },
+      "launchBrowser": {
+        "enabled": false
+      }
     }
   ],
   "compounds": [
@@ -167,7 +186,8 @@
         "ReactionAPI",
         "ImageStoreAPI",
         "LogAPI",
-        "CacheAPI"
+        "CacheAPI",
+        "TextSearchAPI"
       ],
       "stopAll": true
     }
