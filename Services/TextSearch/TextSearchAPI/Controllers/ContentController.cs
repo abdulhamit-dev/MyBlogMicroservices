@@ -23,11 +23,11 @@ namespace Namespace
             return Ok(contents);
         }
 
-        [HttpPost("save")]
-        public async Task<ActionResult> Save(Content content)
-        {
-            var result = await _contentService.SaveAsync(content);
-            return Ok(result);
-        }
+        // [HttpPost("save")]
+        // public async Task<ActionResult> Save(Content content)
+        // {
+        //     var result = await _contentService.SaveAsync(content);
+        //     return Ok(result);
+        // }
     }
 }

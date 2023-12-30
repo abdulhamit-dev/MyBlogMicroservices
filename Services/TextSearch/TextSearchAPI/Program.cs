@@ -1,4 +1,5 @@
 
+using RabbitMQ.Client;
 using TextSearchAPI.Extensions;
 using TextSearchAPI.Models;
 using TextSearchAPI.Repository;
@@ -6,16 +7,21 @@ using TextSearchAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddElastic(builder.Configuration);
-builder.Services.AddScoped<ContentService>();
-builder.Services.AddScoped<ContentRepository>();
+builder.Services.AddSingleton<IContentService,ContentService>();
+builder.Services.AddSingleton<ContentRepository>();
+builder.Services.AddHostedService<ContentBackgroundService>();
 
+builder.Services.AddSingleton(sp => new ConnectionFactory()
+{
+    HostName = "localhost",
+    UserName = "guest",
+    Password = "guest"
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
