@@ -72,5 +72,7 @@ namespace ContentAPI.Services
             _channel.QueueBind(exchange: ExchangeName, queue: QueueName, routingKey: RoutingComment);
             return _channel;
         }
+
+        
     }
 }

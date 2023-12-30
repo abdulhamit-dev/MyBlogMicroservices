@@ -1,9 +1,6 @@
 ﻿
 using ContentAPI.IoC;
 using ContentAPI.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-
 
 namespace ContentAPI.DependencyResolvers
 {
@@ -13,6 +10,7 @@ namespace ContentAPI.DependencyResolvers
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<ILogService,LogService>();
+            services.AddSingleton<ITextSearchService,TextSearchService>();
         }
     }
 }

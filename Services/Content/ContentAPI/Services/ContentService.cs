@@ -15,8 +15,9 @@ public class ContentService : IContentService
     private readonly IMongoCollection<Content> _contentCollection;
     private readonly IMapper _mapper;
     private readonly ILogService _logService;
+    private readonly ITextSearchService _textSearchService;
 
-    public ContentService(IConfiguration configuration, IMapper mapper, ILogService logService)
+    public ContentService(IConfiguration configuration, IMapper mapper, ILogService logService, ITextSearchService textSearchService)
     {
         var databaseSettings = configuration.GetSection("DatabaseSettings").Get<DatabaseSettings>();
         var client = new MongoClient(databaseSettings.ConnectionString);
@@ -24,6 +25,7 @@ public class ContentService : IContentService
         _contentCollection = database.GetCollection<Content>(databaseSettings.ContentCollectionName);
         _mapper = mapper;
         _logService = logService;
+        _textSearchService = textSearchService;
     }
 
     public async Task<Response<string>> Create(ContentCreateDto contentCreateDto)
@@ -31,6 +33,13 @@ public class ContentService : IContentService
         var content = _mapper.Map<Content>(contentCreateDto);
         await _contentCollection.InsertOneAsync(content);
         string insertedId = content.Id.ToString();
+
+         _textSearchService.Publish(new TextSearchContentEvent()
+        {
+            Title = content.Title,
+            Text = content.Text
+        });
+        
         return Response<string>.Success(insertedId,(int)HttpStatusCode.OK);
     }
 
