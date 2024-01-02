@@ -24,10 +24,26 @@ namespace TextSearchAPI.Repository
             return result.Documents.ToImmutableList();
 
         }
+        public async Task<ImmutableList<Content>> SearchAsync(string searchText)
+        {
+            var result = await _client.SearchAsync<Content>(s => s
+                .Index(indexName)
+                .Query(q => q
+                    .Bool(b => b
+                        .Should(
+                            bs => bs.Wildcard(w => w.Field(f => f.Title).Value("*" + searchText + "*")),
+                            bs => bs.Wildcard(w => w.Field(f => f.Text).Value("*" + searchText + "*"))
+                        )
+                    )
+                )
+            );
+
+            return result.Documents.ToImmutableList();
+        }
 
         public async Task<Content?> SaveAsync(Content content)
         {
-           
+
 
             var response = await _client.IndexAsync(content, x => x.Index(indexName));
 

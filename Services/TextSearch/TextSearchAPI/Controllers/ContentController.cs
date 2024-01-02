@@ -9,25 +9,25 @@ namespace Namespace
     [ApiController]
     public class ContentController : CustomBaseController
     {
-        private readonly ContentService _contentService;
+        private readonly IContentService _contentService;
 
-        public ContentController(ContentService contentService)
+        public ContentController(IContentService contentService)
         {
             _contentService = contentService;
         }
 
         [HttpGet("get")]
-        public async Task<ActionResult> Get()
+        public async Task<IActionResult> Get()
         {
             var contents = await _contentService.GetAllAsync();
-            return Ok(contents);
+            return CreateActionResultInstance(contents);
         }
 
-        // [HttpPost("save")]
-        // public async Task<ActionResult> Save(Content content)
-        // {
-        //     var result = await _contentService.SaveAsync(content);
-        //     return Ok(result);
-        // }
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(string searchText)
+        {
+            var contents = await _contentService.SearchAsync(searchText);
+            return CreateActionResultInstance(contents);
+        }
     }
 }

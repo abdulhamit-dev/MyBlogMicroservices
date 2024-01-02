@@ -21,12 +21,13 @@ namespace TextSearchAPI.Services
         private readonly IContentService _contentService;
         private readonly IMapper _mapper;
 
-        public ContentBackgroundService(ConnectionFactory connectionFactory, IServiceProvider serviceProvider, IContentService contentService)
+        public ContentBackgroundService(ConnectionFactory connectionFactory, IServiceProvider serviceProvider, IContentService contentService, IMapper mapper)
         {
             _connectionFactory = connectionFactory;
             _channel = Connect();
             _serviceProvider = serviceProvider;
             _contentService = contentService;
+            _mapper = mapper;
         }
 
 
