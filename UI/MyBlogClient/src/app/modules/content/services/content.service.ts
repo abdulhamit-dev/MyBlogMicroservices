@@ -19,6 +19,10 @@ export class ContentService {
     return this.httpHelperService.get("content/content/getall")
   }
 
+  search(search:string): Observable<ReturnObject> {
+    return this.httpHelperService.get("textsearch/content/search?searchText="+search)
+  }
+
   contentByCategoryId(id: string): Observable<ReturnObject> {
     return this.httpHelperService.get("content/content/GetAllByCategoryName?categoryId=" + id)
   }

@@ -1,4 +1,20 @@
 <div class="grid">
+    <div class="col-12 md:col-12">
+        <div class="flex flex-column gap-2">
+            <label htmlFor="search">Search ( content,title )</label>
+            <input pInputText id="search" [(ngModel)]="searchText" (ngModelChange)="search($event)" />
+            <p-card header="searching.." *ngIf="contentSearchDtos.length>0">
+                <ul>
+                    <li *ngFor="let search of contentSearchDtos">
+                        <p><b> {{search.title}}</b>
+                            <br>
+                            {{search.text}}
+                        </p>
+                    </li>
+                </ul>
+            </p-card>
+        </div>
+    </div>
     <div class="col-12 md:col-4" *ngFor="let contentDto of contentDtos">
         <p-card header="{{contentDto.title}}" [routerLink]="'/detail/'+contentDto.id">
             <ng-template pTemplate="header">
@@ -8,9 +24,12 @@
                 {{contentDto.text}}
             </p>
             <ng-template pTemplate="footer">
-                {{contentDto.likes.length}}<i class="pi pi-heart" style="font-size: 1rem; cursor: pointer;margin-right: 20px;"></i>
-                {{contentDto.comments.length}}<i class="pi pi-comment" style="font-size: 1rem; cursor: pointer;margin-right: 20px;"></i>
-                {{contentDto.user.username}}<i class="pi pi-user" style="font-size: 1rem; cursor: pointer;margin-right: 20px;"></i>
+                {{contentDto.likes.length}}<i class="pi pi-heart"
+                    style="font-size: 1rem; cursor: pointer;margin-right: 20px;"></i>
+                {{contentDto.comments.length}}<i class="pi pi-comment"
+                    style="font-size: 1rem; cursor: pointer;margin-right: 20px;"></i>
+                {{contentDto.user.username}}<i class="pi pi-user"
+                    style="font-size: 1rem; cursor: pointer;margin-right: 20px;"></i>
             </ng-template>
         </p-card>
     </div>
