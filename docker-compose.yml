@@ -3,6 +3,7 @@ version: '3.8'
 services:
   MyBlog_CategoryDb:
     image: mongo:latest
+    container_name: MyBlog_CategoryDb
     ports:
       - "27020:27017"
     volumes:
@@ -10,6 +11,7 @@ services:
 
   MyBlog_ReactionDb:
     image: mongo:latest
+    container_name: MyBlog_ReactionDb
     ports:
       - "27019:27017"
     volumes:
@@ -17,6 +19,7 @@ services:
 
   MyBlog_CommentDb:
     image: couchbase:community
+    container_name: MyBlog_CommentDb
     ports:
       - "8091-8094:8091-8094"
       - "11210:11210"
@@ -28,6 +31,7 @@ services:
 
   MyBlog_ContentDb:
     image: mongo:latest
+    container_name: MyBlog_ContentDb
     ports:
       - "27018:27017"
     volumes:
@@ -35,6 +39,7 @@ services:
 
   MyBlog_IdentityDb:
     image: mongo:latest
+    container_name: MyBlog_IdentityDb
     ports:
       - "27021:27017"
     volumes:
@@ -42,6 +47,7 @@ services:
   
   MyBlog_Rabbitmq:
     image: rabbitmq:3.11.16-management
+    container_name: MyBlog_Rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -50,22 +56,28 @@ services:
     restart: always
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+  
   MyBlog_Datalust_Seq:
     image: datalust/seq:latest
+    container_name: MyBlog_Datalust_Seq
     ports:
       - "5341:80"
     environment:
       - ACCEPT_EULA=Y
     volumes:
       - datalust_seq_data:/data
+  
   Myblog_RedisDb:
     image: redis:latest
+    container_name: Myblog_RedisDb
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
+  
   MyBlog_Minio: 
     image: minio/minio
+    container_name: MyBlog_Minio
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -75,8 +87,10 @@ services:
       MINIO_ROOT_USER: admin
       MINIO_ROOT_PASSWORD: Strong#Pass#2023
     command: server --console-address ":9001" /data
+  
   MyBlog_Elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
+    container_name: MyBlog_Elasticsearch
     expose:
       - 9200
     environment:
@@ -90,8 +104,10 @@ services:
       - 9200:9200
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
+  
   MyBlog_Kibana:
     image: docker.elastic.co/kibana/kibana:8.7.1
+    container_name: MyBlog_Kibana
     environment:
       - ELASTICSEARCH_HOSTS=http://myblog_elasticsearch:9200
     expose:
@@ -104,6 +120,26 @@ services:
       - 5601:5601
     volumes:
       - kibana-data:/usr/share/kibana/data
+
+  MyBlog_Jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: MyBlog_Jaeger
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+    ports:
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+      - "14250:14250"
+      - "14268:14268"
+      - "14269:14269"
+      - "9411:9411"
+    volumes:
+      - jaeger-data:/var/jaeger
+
 networks:
   rabbitmq:
     driver: bridge
@@ -123,4 +159,5 @@ volumes:
   elasticsearch-data:
     driver: local
   kibana-data:
-    driver: local 
+    driver: local
+  jaeger-data: 
