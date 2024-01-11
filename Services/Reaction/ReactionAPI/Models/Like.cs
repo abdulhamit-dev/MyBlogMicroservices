@@ -9,7 +9,7 @@ public class Like
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }
     public string UserId { get; set; }
-    public string CommentId { get; set; }
+    public string ContentId { get; set; }
     [BsonRepresentation(BsonType.DateTime)]
     public DateTime CreatedTime { get; set; } = DateTime.Now;
     public User User { get; set; }
