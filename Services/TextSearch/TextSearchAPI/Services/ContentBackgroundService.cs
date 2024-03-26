@@ -37,11 +37,11 @@ namespace TextSearchAPI.Services
             {
                 var channel = Connect();
                 var consumer = new EventingBasicConsumer(channel);
-                consumer.Received += (model, ea) =>
+                consumer.Received += async (model, ea) =>
                 {
                     var likeCreatedEvent = JsonSerializer.Deserialize<TextSearchContentEvent>(Encoding.UTF8.GetString(ea.Body.ToArray()));
                     var content=_mapper.Map<Content>(likeCreatedEvent);
-                    _contentService.SaveAsync(content);
+                    await _contentService.SaveAsync(content);
                 };
 
                 channel.BasicConsume(queue: QueueName, autoAck: true, consumer: consumer);

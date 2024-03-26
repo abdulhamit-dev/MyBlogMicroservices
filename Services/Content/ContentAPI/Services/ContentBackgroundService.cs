@@ -53,7 +53,6 @@ namespace ContentAPI.Services
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    Console.WriteLine("conn=");
                     await Task.Delay(1000, stoppingToken);
                 }
             }

@@ -56,7 +56,7 @@ public class CategoryService : ICategoryService
 
             var jsonData = JsonSerializer.Serialize(categoriesDtos);
             _cacheService.Add(new CacheDto() { Key = "category_getall", Value = jsonData });
-        }
+       }
         return Response<List<CategoryDto>>.Success(categoriesDtos, (int)HttpStatusCode.OK);
     }
 
