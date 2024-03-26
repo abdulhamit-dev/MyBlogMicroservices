@@ -12,11 +12,14 @@ namespace CategoryAPI.Services
     {
 
         private readonly HttpClient _httpClient;
-        public CacheService(HttpClient httpClient, IHttpClientFactory _httpClientFactory)
+        private readonly IConfiguration _configuration;
+        public CacheService(HttpClient httpClient, IHttpClientFactory _httpClientFactory,IConfiguration configuration)
         {
+            _configuration=configuration;
             _httpClient = httpClient;
             _httpClient = _httpClientFactory.CreateClient();
-            _httpClient.BaseAddress = new Uri("http://localhost:5021/api/");
+            Console.WriteLine(_configuration["CacheService"]);
+            _httpClient.BaseAddress = new Uri(_configuration["CacheService"]);
         }
 
         public async void Add(CacheDto cacheDto)

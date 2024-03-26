@@ -13,10 +13,14 @@ namespace Namespace
     public class CacheController : ControllerBase
     {
         private readonly ConnectionMultiplexer _redis;
+        private readonly IConfiguration _configuration;
 
-        public CacheController()
+        public CacheController(IConfiguration configuration)
         {
-            _redis = ConnectionMultiplexer.Connect("localhost");
+            // _redis = ConnectionMultiplexer.Connect("172.30.0.10:6379");
+            _configuration=configuration;
+            _redis = ConnectionMultiplexer.Connect("Myblog_RedisDb:6379");
+            _redis = ConnectionMultiplexer.Connect(_configuration["RedisConnection"]);
         }
 
         [HttpPost("add")]
