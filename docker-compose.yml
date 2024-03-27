@@ -25,12 +25,15 @@ services:
     container_name: MyBlog_CommentDb
     ports:
       - "8091-8094:8091-8094"
+    expose:
       - "11210:11210"
       - "8095-8097"
       - "11207"
       - "11280"
     volumes:
-      - comment_data:/var/lib/couchbase/data
+      - comment_data:/opt/couchbase/var
+    networks:
+      - commentdb-net
 
   MyBlog_ContentDb:
     image: mongo:latest
@@ -48,27 +51,27 @@ services:
     volumes:
       - identity_data:/data/db
   
-  # MyBlog_Rabbitmq:
-  #   image: rabbitmq:3.11.16-management
-  #   container_name: MyBlog_Rabbitmq
-  #   ports:
-  #     - "5672:5672"
-  #     - "15672:15672"
-  #   networks:
-  #     - rabbitmq
-  #   restart: always
-  #   volumes:
-  #     - rabbitmq_data:/var/lib/rabbitmq
-  
-  MyBlog_Datalust_Seq:
-    image: datalust/seq:latest
-    container_name: MyBlog_Datalust_Seq
+  MyBlog_Rabbitmq:
+    image: rabbitmq:3.11.16-management
+    container_name: MyBlog_Rabbitmq
     ports:
-      - "5341:80"
-    environment:
-      - ACCEPT_EULA=Y
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - rabbitmq
+    restart: always
     volumes:
-      - datalust_seq_data:/data
+      - rabbitmq_data:/var/lib/rabbitmq
+  
+  # MyBlog_Datalust_Seq:
+  #   image: datalust/seq:latest
+  #   container_name: MyBlog_Datalust_Seq
+  #   ports:
+  #     - "5341:80"
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #   volumes:
+  #     - datalust_seq_data:/data
   
   Myblog_RedisDb:
     image: redis:latest
@@ -180,15 +183,35 @@ services:
       - Myblog_RedisDb
     networks:
       - redis-net
-
+  
+  Comment_Api:
+    container_name: Comment_Api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Couchbase:ConnectionString=couchbase://MyBlog_CommentDb
+      - RabbitMQ=MyBlog_Rabbitmq
+    image: comment_api_image
+    build: 
+      context: .
+      dockerfile: Services/Comment/CommentAPI/Dockerfile
+    ports:
+      - "5016:80"
+    depends_on:
+      - MyBlog_CommentDb
+      - MyBlog_Rabbitmq
+    networks:
+      - rabbitmq
+      - commentdb-net
+#/opt/couchbase/var/lib/couchbase/logs
 
 networks:
-  # rabbitmq:
-  #   driver: bridge
+  rabbitmq:
+    driver: bridge
   # es-net:
   #   driver: bridge
   redis-net:
   categorydb-net:
+  commentdb-net:
 
 volumes:
   category_data:
@@ -196,8 +219,8 @@ volumes:
   comment_data:
   content_data:
   identity_data:
-  # rabbitmq_data:
-  datalust_seq_data:
+  rabbitmq_data:
+  # datalust_seq_data:
   # minio_data:
   redis_data:
   # elasticsearch-data:
