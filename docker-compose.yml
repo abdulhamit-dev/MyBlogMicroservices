@@ -42,6 +42,9 @@ services:
       - "27018:27017"
     volumes:
       - content_data:/data/db
+    command: ["mongod", "--port", "27018"]
+    networks:
+      - contentdb-net
 
   MyBlog_IdentityDb:
     image: mongo:latest
@@ -202,7 +205,26 @@ services:
     networks:
       - rabbitmq
       - commentdb-net
-#/opt/couchbase/var/lib/couchbase/logs
+  
+  Content_Api:
+    container_name: Content_Api
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - RabbitMQ=MyBlog_Rabbitmq
+      - DatabaseSettings:ConnectionString=mongodb://MyBlog_ContentDb:27018
+    image: content_api_image
+    build: 
+      context: .
+      dockerfile: Services/Content/ContentAPI/Dockerfile
+    ports:
+      - "5015:80"
+    depends_on:
+      - MyBlog_Rabbitmq
+      - MyBlog_ContentDb
+    networks:
+      - rabbitmq
+      - contentdb-net
 
 networks:
   rabbitmq:
@@ -212,6 +234,7 @@ networks:
   redis-net:
   categorydb-net:
   commentdb-net:
+  contentdb-net:
 
 volumes:
   category_data:
