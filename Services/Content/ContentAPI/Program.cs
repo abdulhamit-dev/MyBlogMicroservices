@@ -39,24 +39,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true
         };
     });
-    
+
 builder.Services.AddSingleton(sp => new ConnectionFactory()
 {
-    HostName = "localhost",
+    HostName = builder.Configuration["RabbitMQ"],
     UserName = "guest",
     Password = "guest"
 });
+
+builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
 
 builder.Services.AddAuthorization(options =>
 {
     options.DefaultPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
 });
+// builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 // builder.Services.AddHostedService<ContentBackgroundService>();
 // builder.Services.AddHostedService<ReactionBackgroundService>();
-// builder.Services.AddSingleton<IContentService,ContentService>();
-// builder.Services.AddSingleton<ILogService,LogService>();
+// builder.Services.AddSingleton<IContentService, ContentService>();
+// builder.Services.AddSingleton<ILogService, LogService>();
+// builder.Services.AddSingleton<ITextSearchService, TextSearchService>();
 
-// builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
 // builder.Services.AddSingleton<IDatabaseSettings>(sp =>
 // {
 //     return sp.GetRequiredService<IOptions<DatabaseSettings>>().Value;
