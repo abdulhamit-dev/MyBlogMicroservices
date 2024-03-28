@@ -1,5 +1,4 @@
-﻿
-using System.Text;
+﻿using System.Text;
 using AOPSample.Autofac;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -7,10 +6,8 @@ using ContentAPI.DependencyResolvers;
 using ContentAPI.Extensions;
 using ContentAPI.IoC;
 using ContentAPI.Models.Settings;
-using ContentAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RabbitMQ.Client;
 
@@ -53,18 +50,6 @@ builder.Services.AddAuthorization(options =>
 {
     options.DefaultPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
 });
-// builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-// builder.Services.AddHostedService<ContentBackgroundService>();
-// builder.Services.AddHostedService<ReactionBackgroundService>();
-// builder.Services.AddSingleton<IContentService, ContentService>();
-// builder.Services.AddSingleton<ILogService, LogService>();
-// builder.Services.AddSingleton<ITextSearchService, TextSearchService>();
-
-// builder.Services.AddSingleton<IDatabaseSettings>(sp =>
-// {
-//     return sp.GetRequiredService<IOptions<DatabaseSettings>>().Value;
-// });
-
 
 builder.Services.AddDependencyResolvers(new ICoreModule[]
             {
