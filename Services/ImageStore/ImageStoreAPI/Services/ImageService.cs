@@ -7,14 +7,17 @@ namespace ImageStoreAPI.Services;
 public class ImageService : IImageService
 {
     private readonly IMinioClient _minioClient;
+    private readonly IConfiguration _configuration;
 
-    public ImageService(IMinioClient minioClient)
+    public ImageService(IMinioClient minioClient, IConfiguration configuration)
     {
         _minioClient = minioClient;
+        _configuration = configuration;
     }
 
     public async Task<Response<string>> UploadImage(IFormFile file)
     {
+    
         var bucketName = "image";
         var objectName = file.FileName;
 
@@ -28,8 +31,7 @@ public class ImageService : IImageService
 
             await _minioClient.PutObjectAsync(putObjectArgs);
         }
-
-        var url = $"http://localhost:9000/image/{objectName}";
+        var url = $"http://{_configuration["ImageStoreUrl"]}/image/{objectName}";
 
         return Response<string>.Success(url, 200);
     }

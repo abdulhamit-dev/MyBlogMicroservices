@@ -3,11 +3,9 @@ using Minio;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var endpoint = "localhost:9000";
+var endpoint = builder.Configuration["ImageStoreUrl"];
 var accessKey = "shLtQJKQi5WC105JegsY";
 var secretKey = "elgwdoJ5NJu3PYosfBFQ6vJQkgIBinPV8OkM2D31";
-
-// builder.Services.AddMinio(accessKey, secretKey);
 builder.Services.AddMinio(configureClient => configureClient
             .WithEndpoint(endpoint)
             .WithCredentials(accessKey, secretKey).WithSSL(false));
