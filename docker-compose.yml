@@ -90,18 +90,20 @@ services:
       - redis-net
     command: ["--port", "6379"]
   
-  # MyBlog_Minio: 
-  #   image: minio/minio
-  #   container_name: MyBlog_Minio
-  #   ports:
-  #     - "9000:9000"
-  #     - "9001:9001"
-  #   volumes:
-  #     - minio_data:/data
-  #   environment:
-  #     MINIO_ROOT_USER: admin
-  #     MINIO_ROOT_PASSWORD: Strong#Pass#2023
-  #   command: server --console-address ":9001" /data
+  myblog-minio: 
+    image: minio/minio
+    container_name: myblog-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: Strong#Pass#2023
+    command: server --address :9000 --console-address ":9001" /data
+    networks:
+      - minio-net
   
   # MyBlog_Elasticsearch:
   #   image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
@@ -245,6 +247,26 @@ services:
     networks:
       - identitydb-net
 
+  ImageStore_Api:
+    container_name: ImageStore_Api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ImageStoreUrl=myblog-minio:9000
+    image: imagestore_api_image
+    build: 
+      context: .
+      dockerfile: Services/ImageStore/ImageStoreAPI/Dockerfile
+    ports:
+      - "5018:80"
+    depends_on:
+      - myblog-minio
+    networks:
+      - minio-net
+
+
+
+  
+
 networks:
   rabbitmq:
     driver: bridge
@@ -255,6 +277,7 @@ networks:
   commentdb-net:
   contentdb-net:
   identitydb-net:
+  minio-net:
 
 volumes:
   category_data:
@@ -264,7 +287,7 @@ volumes:
   identity_data:
   rabbitmq_data:
   # datalust_seq_data:
-  # minio_data:
+  minio_data:
   redis_data:
   # elasticsearch-data:
   #   driver: local
