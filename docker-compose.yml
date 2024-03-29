@@ -53,6 +53,9 @@ services:
       - "27021:27017"
     volumes:
       - identity_data:/data/db
+    command: ["mongod", "--port", "27021"]
+    networks:
+      - identitydb-net
   
   MyBlog_Rabbitmq:
     image: rabbitmq:3.11.16-management
@@ -225,6 +228,22 @@ services:
     networks:
       - rabbitmq
       - contentdb-net
+  
+  Identity_Api:
+    container_name: Identity_Api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DatabaseSettings:ConnectionString=mongodb://MyBlog_IdentityDb:27021
+    image: identity_api_image
+    build: 
+      context: .
+      dockerfile: Services/Identity/IdentityAPI/Dockerfile
+    ports:
+      - "5001:80"
+    depends_on:
+      - MyBlog_IdentityDb
+    networks:
+      - identitydb-net
 
 networks:
   rabbitmq:
@@ -235,6 +254,7 @@ networks:
   categorydb-net:
   commentdb-net:
   contentdb-net:
+  identitydb-net:
 
 volumes:
   category_data:
