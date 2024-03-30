@@ -1,14 +1,14 @@
 version: '3.8'
 
 services:
-  MyBlog_CategoryDb:
+  myblog-categorydb:
     image: mongo:latest
-    container_name: MyBlog_CategoryDb
+    container_name: myblog-categorydb
     ports:
-      - "27020:27017"
+      - "27017:27017"
     volumes:
       - category_data:/data/db
-    # command: ["mongod", "--port", "27017"]
+    command: ["mongod", "--port", "27017"]
     networks:
       - categorydb-net
 
@@ -16,16 +16,16 @@ services:
     image: mongo:latest
     container_name: myblog-reactiondb
     ports:
-      - "27023:27017"
+      - "27018:27018"
     volumes:
       - reaction_data:/data/db
-    # command: ["mongod", "--port", "27019"]
+    command: ["mongod", "--port", "27018"]
     networks:
       - reactiondb-net
 
-  MyBlog_CommentDb:
+  myblog-commentdb:
     image: couchbase:community
-    container_name: MyBlog_CommentDb
+    container_name: myblog-commentdb
     ports:
       - "8091-8094:8091-8094"
     expose:
@@ -38,31 +38,31 @@ services:
     networks:
       - commentdb-net
 
-  MyBlog_ContentDb:
+  myblog-contentdb:
     image: mongo:latest
-    container_name: MyBlog_ContentDb
+    container_name: myblog-contentdb
     ports:
-      - "27024:27017"
+      - "27019:27019"
     volumes:
       - content_data:/data/db
-    # command: ["mongod", "--port", "27018"]
+    command: ["mongod", "--port", "27019"]
     networks:
       - contentdb-net
 
-  MyBlog_IdentityDb:
+  myblog-identitydb:
     image: mongo:latest
-    container_name: MyBlog_IdentityDb
+    container_name: myblog-identitydb
     ports:
-      - "27022:27017"
+      - "27020:27020"
     volumes:
       - identity_data:/data/db
-    # command: ["mongod", "--port", "27021"]
+    command: ["mongod", "--port", "27020"]
     networks:
       - identitydb-net
   
-  MyBlog_Rabbitmq:
+  myblog-rabbitmq:
     image: rabbitmq:3.11.16-management
-    container_name: MyBlog_Rabbitmq
+    container_name: myblog-rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -85,9 +85,9 @@ services:
     networks:
       - logger-net
   
-  Myblog_RedisDb:
+  myblog-redisdb:
     image: redis:latest
-    container_name: Myblog_RedisDb
+    container_name: myblog-redisdb
     ports:
       - "6379:6379"
     volumes:
@@ -163,12 +163,12 @@ services:
   #   volumes:
   #     - jaeger-data:/var/jaeger
   
-  Category_Api:
-    container_name: Category_Api
+  category-api:
+    container_name: category-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - DatabaseSettings:ConnectionString=mongodb://MyBlog_CategoryDb:27020
-      - CacheService=http://Cache_Api/api/
+      - DatabaseSettings:ConnectionString=mongodb://myblog-categorydb:27017
+      - CacheService=http://cache-api/api/
     image: category_api_image
     build: 
       context: .
@@ -176,17 +176,17 @@ services:
     ports:
       - "5019:80"
     depends_on:
-      - MyBlog_CategoryDb
-      - Cache_Api
+      - myblog-categorydb
+      - cache-api
     networks:
       - redis-net
       - categorydb-net
   
-  Cache_Api:
-    container_name: Cache_Api
+  cache-api:
+    container_name: cache-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - RedisConnection=Myblog_RedisDb:6379
+      - RedisConnection=myblog-redisdb:6379
     image: cache_api_image
     build: 
       context: .
@@ -194,16 +194,16 @@ services:
     ports:
       - "5021:80"
     depends_on:
-      - Myblog_RedisDb
+      - myblog-redisdb
     networks:
       - redis-net
   
-  Comment_Api:
-    container_name: Comment_Api
+  comment-api:
+    container_name: comment-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - Couchbase:ConnectionString=couchbase://MyBlog_CommentDb
-      - RabbitMQ=MyBlog_Rabbitmq
+      - Couchbase:ConnectionString=couchbase://myblog-commentdb
+      - RabbitMQ=myblog-rabbitmq
     image: comment_api_image
     build: 
       context: .
@@ -211,19 +211,19 @@ services:
     ports:
       - "5016:80"
     depends_on:
-      - MyBlog_CommentDb
-      - MyBlog_Rabbitmq
+      - myblog-commentdb
+      - myblog-rabbitmq
     networks:
       - rabbitmq
       - commentdb-net
   
-  Content_Api:
-    container_name: Content_Api
+  content-api:
+    container_name: content-api
     restart: always
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - RabbitMQ=MyBlog_Rabbitmq
-      - DatabaseSettings:ConnectionString=mongodb://MyBlog_ContentDb:27024
+      - RabbitMQ=myblog-rabbitmq
+      - DatabaseSettings:ConnectionString=mongodb://myblog-contentdb:27019
     image: content_api_image
     build: 
       context: .
@@ -231,17 +231,17 @@ services:
     ports:
       - "5015:80"
     depends_on:
-      - MyBlog_Rabbitmq
-      - MyBlog_ContentDb
+      - myblog-rabbitmq
+      - myblog-contentdb
     networks:
       - rabbitmq
       - contentdb-net
   
-  Identity_Api:
-    container_name: Identity_Api
+  identity-api:
+    container_name: identity-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - DatabaseSettings:ConnectionString=mongodb://MyBlog_IdentityDb:27022
+      - DatabaseSettings:ConnectionString=mongodb://myblog-identitydb:27020
     image: identity_api_image
     build: 
       context: .
@@ -249,12 +249,12 @@ services:
     ports:
       - "5001:80"
     depends_on:
-      - MyBlog_IdentityDb
+      - myblog-identitydb
     networks:
       - identitydb-net
 
-  ImageStore_Api:
-    container_name: ImageStore_Api
+  imagestore-api:
+    container_name: imagestore-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ImageStoreUrl=myblog-minio:9000
@@ -284,7 +284,7 @@ services:
       - "5020:80"
     depends_on:
       - myblog-datalust-seq
-      - MyBlog_Rabbitmq
+      - myblog-rabbitmq
     networks:
       - rabbitmq
       - logger-net  
@@ -294,7 +294,7 @@ services:
     restart: always
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - DatabaseSettings:ConnectionString=mongodb://myblog-reactiondb:27023
+      - DatabaseSettings:ConnectionString=mongodb://myblog-reactiondb:27018
       - RabbitMQ=MyBlog_Rabbitmq
     image: reaction_api_image
     build: 
@@ -303,7 +303,7 @@ services:
     ports:
       - "5017:80"
     depends_on:
-      - MyBlog_Rabbitmq
+      - myblog-rabbitmq
       - myblog-reactiondb
     networks:
       - rabbitmq
@@ -311,7 +311,6 @@ services:
 
 networks:
   rabbitmq:
-    driver: bridge
   # es-net:
   #   driver: bridge
   redis-net:
