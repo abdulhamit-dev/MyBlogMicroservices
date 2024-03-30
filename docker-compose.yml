@@ -69,15 +69,18 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
   
-  # MyBlog_Datalust_Seq:
-  #   image: datalust/seq:latest
-  #   container_name: MyBlog_Datalust_Seq
-  #   ports:
-  #     - "5341:80"
-  #   environment:
-  #     - ACCEPT_EULA=Y
-  #   volumes:
-  #     - datalust_seq_data:/data
+  myblog-datalust-seq:
+    image: datalust/seq:latest
+    restart: always
+    container_name: myblog-datalust-seq
+    ports:
+      - "5341:80"
+    environment:
+      - ACCEPT_EULA=Y
+    volumes:
+      - datalust_seq_data:/data
+    networks:
+      - logger-net
   
   Myblog_RedisDb:
     image: redis:latest
@@ -262,10 +265,25 @@ services:
       - myblog-minio
     networks:
       - minio-net
-
-
-
   
+  log-api:
+    container_name: log-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - RabbitMQ=MyBlog_Rabbitmq
+      - LogDb=http://myblog-datalust-seq:5341
+    image: logger_api_image
+    build: 
+      context: .
+      dockerfile: Services/Logger/LogAPI/Dockerfile
+    ports:
+      - "5020:80"
+    depends_on:
+      - myblog-datalust-seq
+      - MyBlog_Rabbitmq
+    networks:
+      - rabbitmq
+      - logger-net  
 
 networks:
   rabbitmq:
@@ -278,6 +296,7 @@ networks:
   contentdb-net:
   identitydb-net:
   minio-net:
+  logger-net:
 
 volumes:
   category_data:
@@ -286,7 +305,7 @@ volumes:
   content_data:
   identity_data:
   rabbitmq_data:
-  # datalust_seq_data:
+  datalust_seq_data:
   minio_data:
   redis_data:
   # elasticsearch-data:
