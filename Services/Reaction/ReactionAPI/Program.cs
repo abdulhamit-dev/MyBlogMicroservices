@@ -27,7 +27,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 builder.Services.AddSingleton(sp => new ConnectionFactory()
 {
-    HostName = "localhost",
+    HostName = builder.Configuration["RabbitMQ"],
     UserName = "guest",
     Password = "guest"
 });

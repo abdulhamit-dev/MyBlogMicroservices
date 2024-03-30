@@ -8,17 +8,20 @@ services:
       - "27020:27017"
     volumes:
       - category_data:/data/db
-    command: ["mongod", "--port", "27020"]
+    # command: ["mongod", "--port", "27017"]
     networks:
       - categorydb-net
 
-  MyBlog_ReactionDb:
+  myblog-reactiondb:
     image: mongo:latest
-    container_name: MyBlog_ReactionDb
+    container_name: myblog-reactiondb
     ports:
-      - "27019:27017"
+      - "27023:27017"
     volumes:
       - reaction_data:/data/db
+    # command: ["mongod", "--port", "27019"]
+    networks:
+      - reactiondb-net
 
   MyBlog_CommentDb:
     image: couchbase:community
@@ -39,10 +42,10 @@ services:
     image: mongo:latest
     container_name: MyBlog_ContentDb
     ports:
-      - "27018:27017"
+      - "27024:27017"
     volumes:
       - content_data:/data/db
-    command: ["mongod", "--port", "27018"]
+    # command: ["mongod", "--port", "27018"]
     networks:
       - contentdb-net
 
@@ -50,10 +53,10 @@ services:
     image: mongo:latest
     container_name: MyBlog_IdentityDb
     ports:
-      - "27021:27017"
+      - "27022:27017"
     volumes:
       - identity_data:/data/db
-    command: ["mongod", "--port", "27021"]
+    # command: ["mongod", "--port", "27021"]
     networks:
       - identitydb-net
   
@@ -220,7 +223,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - RabbitMQ=MyBlog_Rabbitmq
-      - DatabaseSettings:ConnectionString=mongodb://MyBlog_ContentDb:27018
+      - DatabaseSettings:ConnectionString=mongodb://MyBlog_ContentDb:27024
     image: content_api_image
     build: 
       context: .
@@ -238,7 +241,7 @@ services:
     container_name: Identity_Api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - DatabaseSettings:ConnectionString=mongodb://MyBlog_IdentityDb:27021
+      - DatabaseSettings:ConnectionString=mongodb://MyBlog_IdentityDb:27022
     image: identity_api_image
     build: 
       context: .
@@ -268,6 +271,7 @@ services:
   
   log-api:
     container_name: log-api
+    restart: always
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - RabbitMQ=MyBlog_Rabbitmq
@@ -285,6 +289,26 @@ services:
       - rabbitmq
       - logger-net  
 
+  reaction-api:
+    container_name: reaction-api
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DatabaseSettings:ConnectionString=mongodb://myblog-reactiondb:27023
+      - RabbitMQ=MyBlog_Rabbitmq
+    image: reaction_api_image
+    build: 
+      context: .
+      dockerfile: Services/Reaction/ReactionAPI/Dockerfile
+    ports:
+      - "5017:80"
+    depends_on:
+      - MyBlog_Rabbitmq
+      - myblog-reactiondb
+    networks:
+      - rabbitmq
+      - reactiondb-net
+
 networks:
   rabbitmq:
     driver: bridge
@@ -297,6 +321,7 @@ networks:
   identitydb-net:
   minio-net:
   logger-net:
+  reactiondb-net:
 
 volumes:
   category_data:
