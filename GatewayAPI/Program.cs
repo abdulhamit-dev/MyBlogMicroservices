@@ -24,7 +24,13 @@ builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
    }));
 
-builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
+if(builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddJsonFile("ocelot.dev.json", optional: false, reloadOnChange: true);
+}else{
+    builder.Configuration.AddJsonFile("ocelot.prod.json", optional: false, reloadOnChange: true);
+}
+
 
 builder.Services.AddOcelot(builder.Configuration);
 

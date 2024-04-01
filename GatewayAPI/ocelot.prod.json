@@ -5,8 +5,8 @@
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
           {
-            "Host": "localhost",
-            "Port": 5015
+            "Host": "content-api",
+            "Port": 80
           }
         ],
         "UpstreamPathTemplate": "/services/content/{everything}",
@@ -22,8 +22,8 @@
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
           {
-            "Host": "localhost",
-            "Port": 5019
+            "Host": "category-api",
+            "Port": 80
           }
         ],
         "UpstreamPathTemplate": "/services/category/{everything}",
@@ -39,8 +39,8 @@
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
           {
-            "Host": "localhost",
-            "Port": 5016
+            "Host": "comment-api",
+            "Port": 80
           }
         ],
         "UpstreamPathTemplate": "/services/comment/{everything}",
@@ -56,8 +56,8 @@
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
           {
-            "Host": "localhost",
-            "Port": 5017
+            "Host": "reaction-api",
+            "Port": 80
           }
         ],
         "UpstreamPathTemplate": "/services/reaction/{everything}",
@@ -73,8 +73,8 @@
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
           {
-            "Host": "localhost",
-            "Port": 5018
+            "Host": "imagestore-api",
+            "Port": 80
           }
         ],
         "UpstreamPathTemplate": "/services/imagesstore/{everything}",
@@ -90,8 +90,8 @@
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
           {
-            "Host": "localhost",
-            "Port": 5021
+            "Host": "cache-api",
+            "Port": 80
           }
         ],
         "UpstreamPathTemplate": "/services/cache/{everything}",
@@ -108,7 +108,7 @@
         "DownstreamHostAndPorts": [
           {
             "Host": "localhost",
-            "Port": 5022
+            "Port": 80
           }
         ],
         "UpstreamPathTemplate": "/services/textsearch/{everything}",
@@ -121,6 +121,6 @@
       }
     ],
     "GlobalConfiguration": {
-      "BaseUrl": "http://localhost:5000"
+      "BaseUrl": "http://gateway-api"
     }
   }
