@@ -9,8 +9,6 @@ services:
     volumes:
       - category_data:/data/db
     command: ["mongod", "--port", "27017"]
-    networks:
-      - categorydb-net
 
   myblog-reactiondb:
     image: mongo:latest
@@ -20,8 +18,6 @@ services:
     volumes:
       - reaction_data:/data/db
     command: ["mongod", "--port", "27018"]
-    networks:
-      - reactiondb-net
 
   myblog-commentdb:
     image: couchbase:community
@@ -35,8 +31,6 @@ services:
       - "11280"
     volumes:
       - comment_data:/opt/couchbase/var
-    networks:
-      - commentdb-net
 
   myblog-contentdb:
     image: mongo:latest
@@ -46,8 +40,6 @@ services:
     volumes:
       - content_data:/data/db
     command: ["mongod", "--port", "27019"]
-    networks:
-      - contentdb-net
 
   myblog-identitydb:
     image: mongo:latest
@@ -57,8 +49,6 @@ services:
     volumes:
       - identity_data:/data/db
     command: ["mongod", "--port", "27020"]
-    networks:
-      - identitydb-net
   
   myblog-rabbitmq:
     image: rabbitmq:3.11.16-management
@@ -66,8 +56,6 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    networks:
-      - rabbitmq
     restart: always
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
@@ -82,8 +70,6 @@ services:
       - ACCEPT_EULA=Y
     volumes:
       - datalust_seq_data:/data
-    networks:
-      - logger-net
   
   myblog-redisdb:
     image: redis:latest
@@ -92,8 +78,6 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    networks:
-      - redis-net
     command: ["--port", "6379"]
   
   myblog-minio: 
@@ -108,8 +92,6 @@ services:
       MINIO_ROOT_USER: admin
       MINIO_ROOT_PASSWORD: Strong#Pass#2023
     command: server --address :9000 --console-address ":9001" /data
-    networks:
-      - minio-net
   
   # MyBlog_Elasticsearch:
   #   image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
@@ -162,6 +144,18 @@ services:
   #     - "9411:9411"
   #   volumes:
   #     - jaeger-data:/var/jaeger
+
+  gateway-api:
+    container_name: gateway-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Prod
+      - IdentityServiceUrl=http://identity-api:5001
+    image: gateway_api_image
+    build: 
+      context: .
+      dockerfile: GatewayAPI/Dockerfile
+    ports:
+      - "5002:80"
   
   category-api:
     container_name: category-api
@@ -178,9 +172,7 @@ services:
     depends_on:
       - myblog-categorydb
       - cache-api
-    networks:
-      - redis-net
-      - categorydb-net
+      - gateway-api
   
   cache-api:
     container_name: cache-api
@@ -195,8 +187,6 @@ services:
       - "5021:80"
     depends_on:
       - myblog-redisdb
-    networks:
-      - redis-net
   
   comment-api:
     container_name: comment-api
@@ -213,9 +203,6 @@ services:
     depends_on:
       - myblog-commentdb
       - myblog-rabbitmq
-    networks:
-      - rabbitmq
-      - commentdb-net
   
   content-api:
     container_name: content-api
@@ -233,9 +220,6 @@ services:
     depends_on:
       - myblog-rabbitmq
       - myblog-contentdb
-    networks:
-      - rabbitmq
-      - contentdb-net
   
   identity-api:
     container_name: identity-api
@@ -250,8 +234,6 @@ services:
       - "5001:80"
     depends_on:
       - myblog-identitydb
-    networks:
-      - identitydb-net
 
   imagestore-api:
     container_name: imagestore-api
@@ -266,15 +248,13 @@ services:
       - "5018:80"
     depends_on:
       - myblog-minio
-    networks:
-      - minio-net
   
   log-api:
     container_name: log-api
     restart: always
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - RabbitMQ=MyBlog_Rabbitmq
+      - RabbitMQ=myblog-rabbitmq
       - LogDb=http://myblog-datalust-seq:5341
     image: logger_api_image
     build: 
@@ -285,9 +265,6 @@ services:
     depends_on:
       - myblog-datalust-seq
       - myblog-rabbitmq
-    networks:
-      - rabbitmq
-      - logger-net  
 
   reaction-api:
     container_name: reaction-api
@@ -295,7 +272,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - DatabaseSettings:ConnectionString=mongodb://myblog-reactiondb:27018
-      - RabbitMQ=MyBlog_Rabbitmq
+      - RabbitMQ=myblog-rabbitmq
     image: reaction_api_image
     build: 
       context: .
@@ -305,22 +282,6 @@ services:
     depends_on:
       - myblog-rabbitmq
       - myblog-reactiondb
-    networks:
-      - rabbitmq
-      - reactiondb-net
-
-networks:
-  rabbitmq:
-  # es-net:
-  #   driver: bridge
-  redis-net:
-  categorydb-net:
-  commentdb-net:
-  contentdb-net:
-  identitydb-net:
-  minio-net:
-  logger-net:
-  reactiondb-net:
 
 volumes:
   category_data:
