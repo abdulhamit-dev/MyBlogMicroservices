@@ -93,57 +93,53 @@ services:
       MINIO_ROOT_PASSWORD: Strong#Pass#2023
     command: server --address :9000 --console-address ":9001" /data
   
-  # MyBlog_Elasticsearch:
-  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
-  #   container_name: MyBlog_Elasticsearch
-  #   expose:
-  #     - 9200
-  #   environment:
-  #     - xpack.security.enabled=false
-  #     - "discovery.type=single-node"
-  #     - ELASTIC_USERNAME=elastic
-  #     - ELASTIC_PASSWORD=DkIedPPSCb
-  #   networks:
-  #     - es-net
-  #   ports:
-  #     - 9200:9200
-  #   volumes:
-  #     - elasticsearch-data:/usr/share/elasticsearch/data
+  myblog-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
+    container_name: myblog-elasticsearch
+    expose:
+      - 9200
+    environment:
+      - xpack.security.enabled=false
+      - "discovery.type=single-node"
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=DkIedPPSCb
+    ports:
+      - 9200:9200
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
   
-  # MyBlog_Kibana:
-  #   image: docker.elastic.co/kibana/kibana:8.7.1
-  #   container_name: MyBlog_Kibana
-  #   environment:
-  #     - ELASTICSEARCH_HOSTS=http://myblog_elasticsearch:9200
-  #   expose:
-  #     - 5601
-  #   networks:
-  #     - es-net
-  #   depends_on:
-  #     - MyBlog_Elasticsearch
-  #   ports:
-  #     - 5601:5601
-  #   volumes:
-  #     - kibana-data:/usr/share/kibana/data
+  myblog-kibana:
+    image: docker.elastic.co/kibana/kibana:8.7.1
+    container_name: myblog-kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://myblog-elasticsearch:9200
+    expose:
+      - 5601
+    depends_on:
+      - myblog-elasticsearch
+    ports:
+      - 5601:5601
+    volumes:
+      - kibana-data:/usr/share/kibana/data
 
-  # MyBlog_Jaeger:
-  #   image: jaegertracing/all-in-one:latest
-  #   container_name: MyBlog_Jaeger
-  #   environment:
-  #     - COLLECTOR_ZIPKIN_HOST_PORT=:9411
-  #   ports:
-  #     - "6831:6831/udp"
-  #     - "6832:6832/udp"
-  #     - "5778:5778"
-  #     - "16686:16686"
-  #     - "4317:4317"
-  #     - "4318:4318"
-  #     - "14250:14250"
-  #     - "14268:14268"
-  #     - "14269:14269"
-  #     - "9411:9411"
-  #   volumes:
-  #     - jaeger-data:/var/jaeger
+  myblog-jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: myblog-jaeger
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+    ports:
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+      - "14250:14250"
+      - "14268:14268"
+      - "14269:14269"
+      - "9411:9411"
+    volumes:
+      - jaeger-data:/var/jaeger
 
   gateway-api:
     container_name: gateway-api
@@ -283,6 +279,22 @@ services:
       - myblog-rabbitmq
       - myblog-reactiondb
 
+  textsearch-api:
+    container_name: textsearch-api
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Elastic:Url=http://myblog-elasticsearch:9200
+      - RabbitMQ=myblog-rabbitmq
+    image: textsearch_api_image
+    build: 
+      context: .
+      dockerfile: Services/TextSearch/TextSearchAPI/Dockerfile
+    ports:
+      - "5022:80"
+    depends_on:
+      - myblog-elasticsearch
+
 volumes:
   category_data:
   reaction_data:
@@ -293,8 +305,8 @@ volumes:
   datalust_seq_data:
   minio_data:
   redis_data:
-  # elasticsearch-data:
-  #   driver: local
-  # kibana-data:
-  #   driver: local
-  # jaeger-data: 
+  elasticsearch-data:
+    driver: local
+  kibana-data:
+    driver: local
+  jaeger-data: 
