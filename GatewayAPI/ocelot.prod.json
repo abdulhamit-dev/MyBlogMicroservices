@@ -107,7 +107,7 @@
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
           {
-            "Host": "localhost",
+            "Host": "textsearch-api",
             "Port": 80
           }
         ],
