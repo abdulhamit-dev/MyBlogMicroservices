@@ -18,7 +18,7 @@ builder.Services.AddHostedService<ContentBackgroundService>();
 
 builder.Services.AddSingleton(sp => new ConnectionFactory()
 {
-    HostName = "localhost",
+    HostName = builder.Configuration["RabbitMQ"],
     UserName = "guest",
     Password = "guest"
 });
