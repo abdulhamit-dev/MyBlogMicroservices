@@ -13,8 +13,8 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -25,12 +25,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true
         };
     });
+
 builder.Services.AddSingleton(sp => new ConnectionFactory()
 {
     HostName = builder.Configuration["RabbitMQ"],
     UserName = "guest",
     Password = "guest"
 });
+
 
 builder.Services.AddSingleton<IReactionService,ReactionService>();
 
@@ -39,6 +41,7 @@ builder.Services.AddSingleton<IDatabaseSettings>(sp =>
 {
     return sp.GetRequiredService<IOptions<DatabaseSettings>>().Value;
 });
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

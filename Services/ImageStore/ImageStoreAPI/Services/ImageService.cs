@@ -31,7 +31,7 @@ public class ImageService : IImageService
 
             await _minioClient.PutObjectAsync(putObjectArgs);
         }
-        var url = $"http://{_configuration["ImageStoreUrl"]}/image/{objectName}";
+        var url = $"http://localhost:9000/image/{objectName}";
 
         return Response<string>.Success(url, 200);
     }
