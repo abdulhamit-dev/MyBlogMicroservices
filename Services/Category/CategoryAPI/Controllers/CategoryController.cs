@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SharedLib.ControllerBases;
 
-namespace ContentAPI.Controllers;
+namespace CategoryAPI.Controllers;
 
 // [Authorize]
 [ApiController]
