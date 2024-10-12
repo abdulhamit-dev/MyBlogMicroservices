@@ -1,16 +1,24 @@
 
 using System.Text;
+using Application;
 using CategoryAPI.Models.Settings;
 using CategoryAPI.Services;
+using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Nucleo.Data.MongoDB;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers();
+builder.Services.AddApplicationServices();
+builder.Services.AddPersistenceServices();
+string connectionString = builder.Configuration.GetConnectionString("MongoDbConnection")!;
+string databaseName = builder.Configuration["MongoDb:DatabaseName"]!;
+builder.Services.AddMongoDbRepositories(connectionString,databaseName);
 builder.Services.AddHttpClient();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
