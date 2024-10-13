@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Nucleo.Data.MongoDB" Version="8.0.1" />
+    <PackageReference Include="MongoDB.Bson" Version="2.19.2" />
+    <PackageReference Include="Nucleo.Data" Version="8.0.3" />
   </ItemGroup>
 
 </Project>

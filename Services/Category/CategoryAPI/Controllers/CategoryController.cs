@@ -6,7 +6,6 @@ using Application.Features.Categories.Queries.GetById;
 using Application.Features.Categories.Queries.GetList;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SharedLib.ControllerBases;
 
 namespace CategoryAPI.Controllers;
 
@@ -16,9 +15,9 @@ namespace CategoryAPI.Controllers;
 public class CategoryController(IMediator mediator) : ControllerBase
 {
     [HttpGet("GetAll")]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery]GetListCategoryQuery getListCategoryQuery)
     {
-        var list= await mediator.Send(new GetListCategoryQuery());
+        var list= await mediator.Send(getListCategoryQuery);
         return Ok(list);
     }
 

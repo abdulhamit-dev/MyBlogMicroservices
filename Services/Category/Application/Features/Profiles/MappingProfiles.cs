@@ -5,6 +5,8 @@ using Application.Features.Categories.Queries.GetById;
 using Application.Features.Categories.Queries.GetList;
 using AutoMapper;
 using Domain.Entities;
+using Nucleo.Data.Paging;
+using Nucleo.DDD.Application.Responses;
 
 namespace Application.Features.Profiles;
 
@@ -19,6 +21,6 @@ public class MappingProfiles:Profile
         CreateMap<Category, DeleteCategoryResponse>().ReverseMap();
         CreateMap<Category, GetByIdCategoryResponse>().ReverseMap();
         CreateMap<Category, GetListCategoryResponse>().ReverseMap();
-
+        CreateMap<Paginate<Category>, GetListResponse<GetListCategoryResponse>>().ReverseMap();
     }
 }
