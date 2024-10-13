@@ -22,10 +22,10 @@ public class CreateCategoryCommand:IRequest<CreateCategoryResponse>
 
         public async Task<CreateCategoryResponse> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
-            Category @event = _mapper.Map<Category>(request);
-            @event.Id=Guid.NewGuid();
-            await _categoryRepository.AddAsync(@event); 
-            CreateCategoryResponse response =_mapper.Map<CreateCategoryResponse>(@event);
+            Category @category = _mapper.Map<Category>(request);
+            @category.Id=Guid.NewGuid();
+            await _categoryRepository.AddAsync(@category); 
+            CreateCategoryResponse response =_mapper.Map<CreateCategoryResponse>(@category);
             return response;
         }
     }

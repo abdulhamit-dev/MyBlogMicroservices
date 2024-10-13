@@ -13,9 +13,9 @@ public class Category : IEntityBase<Guid>
     public Guid Id { get; set; }
 
     public string Name { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public string CreatedBy { get; set; }
-    public DateTime UpdatedAt { get; set; }
-    public string UpdatedBy { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public string CreatedBy { get; set; } = "System";
+    public DateTime UpdatedAt { get; set; } = DateTime.Now;
+    public string UpdatedBy { get; set; } = "System";
     public bool IsDeleted { get; set; }
 }
