@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Nucleo.DDD.Application.Pipelines.Caching;
 using Nucleo.DDD.Application.Pipelines.Validation;
 namespace Application;
 
@@ -13,6 +14,7 @@ public static class ApplicationServiceRegistration
         {
             configuration.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             configuration.AddOpenBehavior(typeof(RequestValidationBehavior<,>));
+            configuration.AddOpenBehavior(typeof(CachingBehavior<,>));
         });
         
         return services;

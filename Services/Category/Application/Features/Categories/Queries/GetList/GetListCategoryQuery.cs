@@ -3,14 +3,19 @@ using AutoMapper;
 using Domain.Entities;
 using MediatR;
 using Nucleo.Data.Paging;
+using Nucleo.DDD.Application.Pipelines.Caching;
 using Nucleo.DDD.Application.Requests;
 using Nucleo.DDD.Application.Responses;
 
 namespace Application.Features.Categories.Queries.GetList;
 
-public class GetListCategoryQuery: IRequest<GetListResponse<GetListCategoryResponse>>
+public class GetListCategoryQuery: IRequest<GetListResponse<GetListCategoryResponse>>,ICachableRequest
 {
     public PageRequest PageRequest { get; set; }
+    public string CacheKey => $"GetListCategoryQuery({PageRequest.PageIndex},{PageRequest.PageSize})";
+    public bool BypassCache { get; }
+    public string? CacheGroupKey => "getCategories";
+    public TimeSpan? SlidingExpiration { get; }
     public class GetListCategoryQueryHandler:IRequestHandler<GetListCategoryQuery, GetListResponse<GetListCategoryResponse>>
     {
         private readonly ICategoryRepository _categoryRepository;
