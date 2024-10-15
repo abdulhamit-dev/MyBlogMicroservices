@@ -5,10 +5,11 @@ using MediatR;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Nucleo.DDD.Application.Pipelines.Caching;
+using Nucleo.DDD.Application.Pipelines.Logging;
 
 namespace Application.Features.Categories.Commands.Update;
 
-public class UpdateCategoryCommand:IRequest<UpdateCategoryResponse>,ICacheRemoverRequest
+public class UpdateCategoryCommand:IRequest<UpdateCategoryResponse>,ICacheRemoverRequest,ILoggableRequest
 {
     [BsonId]
     [BsonRepresentation(BsonType.String)]

@@ -2,10 +2,11 @@ using Application.Services.Repositories;
 using AutoMapper;
 using MediatR;
 using Nucleo.DDD.Application.Pipelines.Caching;
+using Nucleo.DDD.Application.Pipelines.Logging;
 
 namespace Application.Features.Categories.Commands.Delete;
 
-public class DeleteCategoryCommand:IRequest<DeleteCategoryResponse>,ICacheRemoverRequest
+public class DeleteCategoryCommand:IRequest<DeleteCategoryResponse>,ICacheRemoverRequest,ILoggableRequest
 {
     public Guid Id { get; set; }
     public string? CacheKey => "";

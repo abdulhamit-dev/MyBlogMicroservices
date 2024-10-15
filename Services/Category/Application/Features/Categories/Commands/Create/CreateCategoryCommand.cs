@@ -3,11 +3,12 @@ using AutoMapper;
 using Domain.Entities;
 using MediatR;
 using Nucleo.DDD.Application.Pipelines.Caching;
+using Nucleo.DDD.Application.Pipelines.Logging;
 
 namespace Application.Features.Categories.Commands.Create;
 
 
-public class CreateCategoryCommand:IRequest<CreateCategoryResponse>,ICacheRemoverRequest
+public class CreateCategoryCommand:IRequest<CreateCategoryResponse>,ICacheRemoverRequest,ILoggableRequest
 {
     public string Name { get; set; }
     public string? CacheKey => "";

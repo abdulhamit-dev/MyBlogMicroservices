@@ -13,6 +13,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers();
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddStackExchangeRedisCache(opt => opt.Configuration = "localhost:6379");
 
 var connectionString = builder.Configuration.GetConnectionString("MongoDbConnection")!;

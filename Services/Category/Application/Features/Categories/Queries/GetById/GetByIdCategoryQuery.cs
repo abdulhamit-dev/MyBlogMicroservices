@@ -3,10 +3,11 @@ using AutoMapper;
 using MediatR;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Nucleo.DDD.Application.Pipelines.Logging;
 
 namespace Application.Features.Categories.Queries.GetById;
 
-public class GetByIdCategoryQuery:IRequest<GetByIdCategoryResponse>
+public class GetByIdCategoryQuery:IRequest<GetByIdCategoryResponse>,ILoggableRequest
 {
     [BsonId]
     [BsonRepresentation(BsonType.String)]
