@@ -15,8 +15,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var connectionString = builder.Configuration.GetConnectionString("MongoDbConnection")!;
-var databaseName = builder.Configuration["MongoDb:DatabaseName"]!;
+var connectionString = builder.Configuration["DatabaseSettings:ConnectionString"]!;
+var databaseName = builder.Configuration["DatabaseSettings:DatabaseName"]!;
 builder.Services.AddMongoDbRepositories(connectionString,databaseName);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
