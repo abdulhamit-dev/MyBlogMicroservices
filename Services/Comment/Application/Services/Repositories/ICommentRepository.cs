@@ -5,5 +5,5 @@ namespace Application.Services.Repositories;
 
 public interface ICommentRepository:IRepository<Comment,Guid>
 {
-    
+    Task<Comment> GetByContentIdAsync(string id);
 }

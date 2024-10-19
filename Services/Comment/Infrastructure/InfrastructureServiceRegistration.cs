@@ -10,9 +10,8 @@ public static class InfrastructureServiceRegistration
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection service)
     {
-            
-        service.AddScoped<ICategoryRepository, CategoryRepository>();
-        service.AddMongoCollection<Category>("Categories");
+        service.AddScoped<ICommentRepository, CommentRepository>();
+        service.AddMongoCollection<Comment>("Comments");
         return service;
     }
 }

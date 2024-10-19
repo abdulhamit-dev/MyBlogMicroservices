@@ -1,14 +1,9 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using Nucleo.Data;
+using Domain.Entities;
 
-namespace Domain.Entities;
+namespace Application.Features.Comments.Queries.GetAllByContentId;
 
-[BsonIgnoreExtraElements]
-public class Comment:IEntityBase<Guid>
+public class GetAllByContentIdResponse
 {
-    [BsonId]
-    [BsonRepresentation(BsonType.String)]
     public Guid Id { get; set; }
     public string ContentId { get; set; }
     public string Text { get; set; }
@@ -19,10 +14,4 @@ public class Comment:IEntityBase<Guid>
     public DateTime UpdatedAt { get; set; }
     public string UpdatedBy { get; set; }
     public bool IsDeleted { get; set; }
-}
-
-public class User
-{
-    public string Id { get; set; }
-    public string Username { get; set; }
 }

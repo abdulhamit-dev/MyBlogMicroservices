@@ -1,62 +1,56 @@
-using CommentAPI.Models.Dtos;
-using CommentAPI.Services;
-using Microsoft.AspNetCore.Authorization;
+using Application.Features.Comments.Commands.Create;
+using Application.Features.Comments.Commands.Delete;
+using Application.Features.Comments.Commands.Update;
+using Application.Features.Comments.Queries.GetAllByContentId;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SharedLib.ControllerBases;
 
 namespace CommentControllerAPI.Controllers;
 
-[ApiController]
 // [Authorize]
+[ApiController]
 [Route("api/[controller]")]
-public class CommentController : CustomBaseController
+public class CommentController(IMediator mediator) : ControllerBase
 {
-private readonly ICommentService _commentService;
-
-    public CommentController(ICommentService commentService)
-    {
-        _commentService = commentService;
-    }
-
-    [HttpGet("GetAll")]
-    public async Task<IActionResult> GetAll()
-    {
-        var contents = await _commentService.GetAll();
-        return CreateActionResultInstance(contents);
-    }
+    // [HttpGet("GetAll")]
+    // public async Task<IActionResult> GetAll()
+    // {
+    //     var contents = await _commentService.GetAll();
+    //     return CreateActionResultInstance(contents);
+    // }
+    //
+    // [HttpGet("GetById")]
+    // public async Task<IActionResult> GetAllByContentId([] contentId)
+    // {
+    //     var contents = await _commentService.GetAllByContentId(contentId);
+    //     return CreateActionResultInstance(contents);
+    // }
 
     [HttpGet("GetAllByContentId")]
-    public async Task<IActionResult> GetAllByContentId(string contentId)
+    public async Task<IActionResult> GetById([FromQuery]GetAllByContentIdQuery getAllByContentIdQuery)
     {
-        var contents = await _commentService.GetAllByContentId(contentId);
-        return CreateActionResultInstance(contents);
-    }
-
-    [HttpGet("GetById")]
-    public async Task<IActionResult> GetById(string id)
-    {
-        var content = await _commentService.GetById(id);
-        return CreateActionResultInstance(content);
+        var response = await mediator.Send(getAllByContentIdQuery);
+        return Ok(response);
     }
 
     [HttpPost("Create")]
-    public async Task<IActionResult> Create(CommentCreateDto commentCreateDto)
+    public async Task<IActionResult> Create([FromBody]CreateCommentCommand createCommentCommand)
     {
-        var response = await _commentService.Create(commentCreateDto);
-        return CreateActionResultInstance(response);
+        var response = await mediator.Send(createCommentCommand);
+        return Ok(response);
     }
 
     [HttpPut("Update")]
-    public async Task<IActionResult> Update(CommentUpdateDto commentUpdateDto)
+    public async Task<IActionResult> Update([FromBody]UpdateCommentCommand updateCommentCommand)
     {
-        var response = await _commentService.Update(commentUpdateDto);
-        return CreateActionResultInstance(response);
+        var response = await mediator.Send(updateCommentCommand);
+        return Ok(response);
     }
 
     [HttpDelete("Delete")]
-    public async Task<IActionResult> Delete(string contentId)
+    public async Task<IActionResult> Delete([FromBody]DeleteCommentCommand deleteCommentCommand)
     {
-        var response = await _commentService.Delete(contentId);
-        return CreateActionResultInstance(response);
-    }
+        var response = await mediator.Send(deleteCommentCommand);
+        return Ok(response);
+    } 
 }
