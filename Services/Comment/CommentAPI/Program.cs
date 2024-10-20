@@ -8,7 +8,6 @@ using Nucleo.Data.MongoDB;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructureServices();
 builder.Services.AddControllers();
@@ -31,13 +30,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true
         };
     });
-
-// builder.Services.AddSingleton(sp => new ConnectionFactory()
-// {
-//     HostName = builder.Configuration["RabbitMQ"],
-//     UserName = "guest",
-//     Password = "guest"
-// });
 
 builder.Services.AddAuthorization(options =>
 {

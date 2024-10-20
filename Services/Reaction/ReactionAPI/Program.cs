@@ -1,18 +1,21 @@
 ﻿using System.Text;
+using Application;
+using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using RabbitMQ.Client;
-using ReactionAPI.Models.Settings;
-using ReactionAPI.Services;
+using Nucleo.Data.MongoDB;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddAutoMapper(typeof(Program));
-
+builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddInfrastructureServices();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var connectionString = builder.Configuration["DatabaseSettings:ConnectionString"]!;
+var databaseName = builder.Configuration["DatabaseSettings:DatabaseName"]!;
+builder.Services.AddMongoDbRepositories(connectionString,databaseName);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
     {
@@ -25,22 +28,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
             ValidateLifetime = true
         };
     });
-
-builder.Services.AddSingleton(sp => new ConnectionFactory()
-{
-    HostName = builder.Configuration["RabbitMQ"],
-    UserName = "guest",
-    Password = "guest"
-});
-
-
-builder.Services.AddSingleton<IReactionService,ReactionService>();
-
-builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
-builder.Services.AddSingleton<IDatabaseSettings>(sp =>
-{
-    return sp.GetRequiredService<IOptions<DatabaseSettings>>().Value;
-});
 
 var app = builder.Build();
 

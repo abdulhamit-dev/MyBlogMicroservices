@@ -1,27 +1,19 @@
+
+using Application.Features.Likes.Commands.Create;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using ReactionAPI.Models.Dtos;
-using ReactionAPI.Services;
 using SharedLib.ControllerBases;
 
 namespace ReactionAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ReactionController : CustomBaseController
+public class ReactionController(IMediator mediator) : ControllerBase
 {
-    private readonly IReactionService _reactionService;
-
-    public ReactionController(IReactionService reactionService)
-    {
-        _reactionService = reactionService;
-    }
-
     [HttpPost("Like")]
-    public async Task<IActionResult> Create(LikeCreateDto likeCreateDto)
+    public async Task<IActionResult> Create([FromBody] CreateLikeCommand createLikeCommand)
     {
-        var response = await _reactionService.Like(likeCreateDto);
-
-        return CreateActionResultInstance(response);
+        var response = await mediator.Send(createLikeCommand);
+        return Ok(response);
     }
-
 }
