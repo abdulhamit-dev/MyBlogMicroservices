@@ -1,0 +1,49 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using Nucleo.Data;
+
+namespace Domain.Entities;
+[BsonIgnoreExtraElements]
+public class Content: IEntityBase<Guid>
+{
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public Guid Id { get; set; }
+    public string Title { get; set; }
+    public string Text { get; set; }
+    public string ImageUrl { get; set; }
+    public bool IsActive { get; set; }=true;
+    public string CategoryId { get; set; }
+    public User User { get; set; }
+    public List<Comment> Comments { get; set; }
+    public List<Like> Likes { get; set; }
+    
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public string CreatedBy { get; set; } = "System";
+    public DateTime UpdatedAt { get; set; } = DateTime.Now;
+    public string UpdatedBy { get; set; } = "System";
+    public bool IsDeleted { get; set; }
+}
+
+public class Like
+{
+    public string Id { get; set; }
+    public string ContentId { get; set; }
+    public DateTime CreatedTime { get; set; } = DateTime.Now;
+    public User User { get; set; }
+}
+
+public class User
+{
+    public string Id { get; set; }
+    public string Username { get; set; }
+}
+
+public class Comment
+{
+    public string Id { get; set; }
+    public string ContentId { get; set; }
+    public string Text { get; set; }
+    public DateTime CreatedTime { get; set; } = DateTime.Now;
+    public User User { get; set; }
+}

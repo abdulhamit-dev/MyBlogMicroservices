@@ -1,75 +1,61 @@
-using ContentAPI.Models.Dtos;
-using ContentAPI.Services;
-using Microsoft.AspNetCore.Authorization;
+using Application.Features.Content.Commands.Create;
+using Application.Features.Content.Commands.Delete;
+using Application.Features.Content.Commands.Update;
+using Application.Features.Content.Queries.GetAll;
+using Application.Features.Content.Queries.GetAllByCategoryId;
+using Application.Features.Content.Queries.GetById;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SharedLib.ControllerBases;
 
 namespace ContentAPI.Controllers;
 
 // [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class ContentController : CustomBaseController
+public class ContentController : ControllerBase
 {
-    private readonly IContentService _contentService;
+    private readonly IMediator _mediator;
 
-    public ContentController(IContentService contentService)
+    public ContentController(IMediator mediator)
     {
-        _contentService = contentService;
+        _mediator = mediator;
     }
 
     [HttpGet("GetAll")]
     public async Task<IActionResult> GetAll()
     {
-        var contents = await _contentService.GetAll();
-        return CreateActionResultInstance(contents);
+        var contents = await _mediator.Send(new GetAllContentQuery());
+        return Ok(contents);
     }
 
     [HttpGet("GetById")]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<IActionResult> GetById(GetByIdQuery getByIdQuery)
     {
-        var content = await _contentService.GetById(id);
-        return CreateActionResultInstance(content);
+       var content = await _mediator.Send(getByIdQuery);
+       return Ok(content);
     }
-
-    [HttpGet("GetAllByCategoryName")]
-    public async Task<IActionResult> GetAllByCategoryName(string categoryId)
-    {
-        var content = await _contentService.GetAllByCategoryId(categoryId);
-        return CreateActionResultInstance(content);
-    }
-
-    [HttpGet("GetAllByUserId")]
-    public async Task<IActionResult> GetAllByUserId(string userId)
-    {
-        var content = await _contentService.GetAllByUserId(userId);
-        return CreateActionResultInstance(content);
-    }
+    
 
     [HttpPost("Create")]
-    public async Task<IActionResult> Create(ContentCreateDto contentCreateDto)
+    public async Task<IActionResult> Create(CreateContentCommand createContentCommand)
     {
-        var response = await _contentService.Create(contentCreateDto);
-
-        return CreateActionResultInstance(response);
+        var response = await _mediator.Send(createContentCommand);
+        return Ok(response);
     }
 
     [HttpPost("Update")]
-    public async Task<IActionResult> Update(ContentUpdateDto contentUpdateDto)
+    public async Task<IActionResult> Update(UpdateContentCommand updateContentCommand)
     {
-        var response = await _contentService.Update(contentUpdateDto);
-        return CreateActionResultInstance(response);
+        var response = await _mediator.Send(updateContentCommand);
+        return Ok(response);
     }
 
 
     [HttpDelete("Delete")]
-    public async Task<IActionResult> Delete(string contentId)
+    public async Task<IActionResult> Delete(DeleteContentCommand deleteContentCommand)
     {
-        var response = await _contentService.Delete(contentId);
-        return CreateActionResultInstance(response);
+        var response = await _mediator.Send(deleteContentCommand);
+        return Ok(response);
     }
-
-
-
 
 }
