@@ -1,16 +1,26 @@
 ﻿using System.Text;
+using Application;
+using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
+using Nucleo.Data.MongoDB;
 using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices();
 
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var connectionString = builder.Configuration["DatabaseSettings:ConnectionString"]!;
+var databaseName = builder.Configuration["DatabaseSettings:DatabaseName"]!;
+builder.Services.AddMongoDbRepositories(connectionString,databaseName);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

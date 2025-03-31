@@ -10,7 +10,7 @@ public class CreateContentCommand:IRequest<CreateContentResponse>
     public string Title { get; set; }
     public string Text { get; set; }
     public string CategoryId { get; set; }
-    public User User { get; set; }
+    public string UserId { get; set; }
     
     public class CreateContentCommandHandler:IRequestHandler<CreateContentCommand, CreateContentResponse>
     {

@@ -20,10 +20,10 @@ public class GetAllContentQuery:IRequest<GetAllContentQueryResponse>
          public async Task<GetAllContentQueryResponse> Handle(GetAllContentQuery request,
              CancellationToken cancellationToken)
          {
-             var contents = await _contentRepository.FindAsync(content => true);
-             var response = _mapper.Map<GetAllContentQueryResponse>(contents);
+             var data = await _contentRepository.FindAsync(content => true);
+             var contents = _mapper.Map<List<ContentDto>>(data);
              return new GetAllContentQueryResponse(){
-                 Contents = response.Contents
+                 Contents = contents
              };
          }
      }

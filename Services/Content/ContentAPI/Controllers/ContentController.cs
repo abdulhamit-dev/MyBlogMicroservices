@@ -29,7 +29,7 @@ public class ContentController : ControllerBase
     }
 
     [HttpGet("GetById")]
-    public async Task<IActionResult> GetById(GetByIdQuery getByIdQuery)
+    public async Task<IActionResult> GetById([FromQuery]GetByIdQuery getByIdQuery)
     {
        var content = await _mediator.Send(getByIdQuery);
        return Ok(content);
